@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.connorjwallace.gambletheodds"
+    namespace = "com.connorjwallace.risktheodds"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.connorjwallace.gambletheodds"
+        applicationId = "com.connorjwallace.risktheodds"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
