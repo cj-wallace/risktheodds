@@ -1,0 +1,59 @@
+<!-- templates/risk.html-->
+
+<html>
+
+<head>
+    
+</head>
+
+<body>
+    <div>
+        <h1> RiskTheOdds </h1>
+        <h2> High Scores:</h2>
+        <ol>
+            {% for item in scores %}
+                <li>{{ item.name }} - ${{ item.score_string }}</li>
+            {% endfor %}
+        </ol>
+    </div>
+</body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    div {
+        width: 50%;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    h2 {
+        text-align: center;
+        color: #666;
+    }
+
+    ol {
+        text-align: center;
+        list-style-type: decimal;
+        padding-left: 0px;
+    }
+
+    li {
+        list-style-type: none;
+        font-size: 18px;
+        margin: 10px 0;
+        color: #333;
+    }
+</style>
