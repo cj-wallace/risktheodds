@@ -1,0 +1,199 @@
+<!-- templates/risk.html-->
+
+<html>
+
+<head>
+	<title>RiskTheOdds</title>
+	<style>
+		.container {
+			width: 400px;
+			border: 1px solid green;
+			padding: 2%;
+			margin-bottom: 5px;
+			text-align: center;
+		}
+	</style>
+	<style>
+		.hideresult {
+			visibility: hidden;
+		}
+	</style>
+	<style>
+		ul {
+			list-style-type: none;
+		}
+	</style>
+	<style>
+		.slidecontainer {
+			width: 100%;
+			}
+
+			.slider {
+			-webkit-appearance: none;
+			width: 100%;
+			height: 25px;
+			background: #d3d3d3;
+			outline: none;
+			-webkit-transition: .2s;
+			}
+
+			.slider:hover {
+			opacity: 1;
+			}
+
+			.slider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 2%;
+			height: 25px;
+			background: #04AA6D;
+			cursor: pointer;
+			}
+
+			.slider::-moz-range-thumb {
+			width: 25px;
+			height: 25px;
+			background: #04AA6D;
+			cursor: pointer;
+			}
+	</style>
+	<style>
+		.btn {
+			border: none; /* Remove borders */
+			color: white; /* Add a text color */
+			width: 100%; /* Full-width */
+			padding: 14px 28px; /* Add some padding */
+			cursor: pointer; /* Add a pointer cursor on mouse-over */
+		}
+		.btn-default {
+			background-color: #04AA6D;
+			color: black;
+			border-radius: 16px;
+		}
+		.btn-alternate {
+			background-color: #D3D3D3;
+			color: black;
+			border-radius: 16px;
+		}
+		.btn-default:hover {
+			background-color: #16BC7F;
+			color: black;
+		}
+	</style>
+	<style>
+		#myProgress {
+			width: 100%;
+			background-color: #ddd;
+		}
+
+		#myBar {
+			-webkit-appearance: none;
+			width: 2%;
+			height: 30px;
+			background-color: #04AA6D;
+			outline: none;
+			text-align: center;
+			line-height: 25px;
+			color: white;
+		}
+	</style>
+</head>
+
+<body>
+    <div class="container">
+		<h1>Risk The Odds</h1>
+		<div>
+			<h2>Results</h2>
+			<div id="results" class="hideresult">
+				<p>Score: ${{ score }}</p>
+				<p>{{ message }}</p>
+			</div>
+		</div>
+		<div id="myProgress">
+			<div id="myBar"></div>
+		</div>
+		<form method="POST"
+			action="{{ url_for('index') }}">
+			<input type="range" class="slider"
+				min="5" 
+				max="100" 
+				name="risk"
+				step="5"
+				value="{{ risk }}">
+			<label for="wager">Wager</label>
+			<input type="number" 
+				name="wager" 
+				value="{{ wager }}"
+				min="5"
+				max="{{ score }}"
+				step="5">
+			<button class="btn btn-default" type="submit">Risk</button>
+		</form>
+		<form method="POST" 
+			action="{{ url_for('scores') }}">
+			<input type="hidden" name="score" value="{{ score }}">
+			<button class="btn btn-alternate" type="submit">Cashout</button>
+		</form>
+	</div>
+	
+	<div class="container">
+		<h2>History</h2>
+		<ul>
+			{% for item in history %}
+				{% if loop.first %}
+					{% if "Win" in item %}
+						<li id="firsthistory" class="hideresult" style="color: green;">{{ item }}</li>
+					{% else %}
+						<li id="firsthistory" class="hideresult" style="color: red;">{{ item }}</li>
+					{% endif %}
+				{% else %}
+					{% if "Win" in item %}
+						<li style="color: green;">{{ item }}</li>
+					{% else %}
+						<li style="color: red;">{{ item }}</li>
+					{% endif %}
+				{% endif %}
+				
+			{% endfor %}
+		</ul>
+	</div>
+</body>
+
+<script>
+	var i = 0;
+	function move(risk, total) {
+		//Check if total is null
+		console.log(risk);
+		console.log(total);
+		
+		if(total == null){
+			total = 0;
+		}
+		if (i == 0) {
+			i = 1;
+			var elem = document.getElementById("myBar");
+			var width = 1;
+			var interval = 20;
+			var id = setInterval(frame, interval);
+			function frame() {
+				if(width >= risk || width >= total){
+					//unhide hideresults
+					document.getElementById("results").classList.remove("hideresult");						document.getElementById("results").classList.remove("hideresult");
+					document.getElementById("firsthistory").classList.remove("hideresult");
+
+				}
+				if (width >= total) {
+					clearInterval(id);
+					i = 0;
+				} else {
+					width++;
+					interval += 5;
+					elem.style.width = width + "%";
+				}
+			}
+		}
+	}
+	move("{{ risk }}", "{{ rand }}" );
+</script>
+
+</html>
