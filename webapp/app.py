@@ -1,17 +1,21 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, session
 import random
 import json
 import os
 
+
 app = Flask(__name__)
 
-score = 100.00
-history = []
+app.secret_key='SECRET_KEY'
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global score
-    global history
+    score = float(session['score'] if 'score' in session else 100.00)
+    history = list(session['history'] if 'history' in session else [])
+
+    print(score)
+    print(history)
+
     if request.method == 'POST':
         post_data = dict(request.form)
 
@@ -34,6 +38,12 @@ def index():
 
         history.insert(0,output)
         history = history[:5]
+
+        session['score'] = score
+        session['history'] = history
+
+        print(score)
+        print(history)
 
         return render_template('risk.html',score=score_str, message=message, risk=int(risk), wager=int(wager), rand=int(rand), history=history)
     elif request.method == 'GET':
@@ -83,10 +93,12 @@ def scores():
                     else:
                         new_score = {"name": name, "score": score, "score_string": "{:,.2f}".format(score)}
                         scores.append(new_score)
-                        print(scores)
                         with open(scores_file, 'w') as f:
                             json.dump(scores, f)
-                        #return redirect('/scores') GET request
+
+                        session['score'] = 100.00
+                        session['history'] = []
+
                         return redirect("/scores")
 
     elif request.method == 'GET':

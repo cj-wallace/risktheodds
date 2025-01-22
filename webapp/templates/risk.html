@@ -167,12 +167,19 @@
 		</ul>
 	</div>
 	<div class="container">
+		<h3>Submit Score</h2>
 		<form method="POST" 
 			action="{{ url_for('scores') }}">
 			<input type="hidden" name="score" value="{{ score }}">
 			<input type="text" name="name" placeholder="Name">
-			<button class="btn btn-alternate" type="submit">Cashout</button>
+			<button class="btn btn-default" type="submit">Cashout</button>
 		</form>
+
+		<br>
+
+		<form method="GET"
+			action="{{ url_for('scores') }}">
+			<button class="btn btn-alternate" type="submit">View High Scores</button>
 </body>
 
 <script>
