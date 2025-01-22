@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Docker build
+docker build --tag 'risktheodds' .
+
 # Define the path to the scores.json file
 SCORES_JSON_PATH="/path/to/scores.json"
 
