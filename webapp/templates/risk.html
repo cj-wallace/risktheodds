@@ -5,11 +5,19 @@
 <head>
 	<title>RiskTheOdds</title>
 	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			margin: 0;
+			padding: 0;
+    	}
 		.container {
-			width: 400px;
-			border: 1px solid green;
-			padding: 2%;
-			margin-bottom: 5px;
+			width: 50%;
+			margin: 50px auto;
+			padding: 20px;
+			background-color: #fff;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			border-radius: 8px;
 			text-align: center;
 		}
 	</style>
@@ -33,6 +41,7 @@
 			width: 100%;
 			height: 25px;
 			background: #d3d3d3;
+			margin: 5px 0;
 			outline: none;
 			-webkit-transition: .2s;
 			}
@@ -61,8 +70,9 @@
 		.btn {
 			border: none; /* Remove borders */
 			color: white; /* Add a text color */
-			width: 100%; /* Full-width */
+			width: 60%; /* Full-width */
 			padding: 14px 28px; /* Add some padding */
+			margin: 8px 0; /* Add some margin */
 			cursor: pointer; /* Add a pointer cursor on mouse-over */
 		}
 		.btn-default {
@@ -76,8 +86,11 @@
 			border-radius: 16px;
 		}
 		.btn-default:hover {
-			background-color: #16BC7F;
+			background-color: #018A4D;
 			color: black;
+		}
+		.btn-alternate:hover {
+			background-color: #B3B3B3;
 		}
 	</style>
 	<style>
@@ -89,6 +102,7 @@
 		#myBar {
 			-webkit-appearance: none;
 			width: 2%;
+			margin: 5px 0;
 			height: 30px;
 			background-color: #04AA6D;
 			outline: none;
@@ -103,10 +117,9 @@
     <div class="container">
 		<h1>Risk The Odds</h1>
 		<div>
-			<h2>Results</h2>
 			<div id="results" class="hideresult">
-				<p>Score: ${{ score }}</p>
-				<p>{{ message }}</p>
+				<h2>Score: ${{ score }}</h2>
+				<h3>{{ message }}</h3>
 			</div>
 		</div>
 		<div id="myProgress">
@@ -116,12 +129,12 @@
 			action="{{ url_for('index') }}">
 			<input type="range" class="slider"
 				min="5" 
-				max="100" 
+				max="95" 
 				name="risk"
 				step="5"
 				value="{{ risk }}">
 			<label for="wager">Wager</label>
-			<input type="number" 
+			<input id="wager" type="number" 
 				name="wager" 
 				value="{{ wager }}"
 				min="5"
@@ -129,11 +142,7 @@
 				step="5">
 			<button class="btn btn-default" type="submit">Risk</button>
 		</form>
-		<form method="POST" 
-			action="{{ url_for('scores') }}">
-			<input type="hidden" name="score" value="{{ score }}">
-			<button class="btn btn-alternate" type="submit">Cashout</button>
-		</form>
+		
 	</div>
 	
 	<div class="container">
@@ -157,15 +166,19 @@
 			{% endfor %}
 		</ul>
 	</div>
+	<div class="container">
+		<form method="POST" 
+			action="{{ url_for('scores') }}">
+			<input type="hidden" name="score" value="{{ score }}">
+			<input type="text" name="name" placeholder="Name">
+			<button class="btn btn-alternate" type="submit">Cashout</button>
+		</form>
 </body>
 
 <script>
 	var i = 0;
 	function move(risk, total) {
 		//Check if total is null
-		console.log(risk);
-		console.log(total);
-		
 		if(total == null){
 			total = 0;
 		}
@@ -173,21 +186,28 @@
 			i = 1;
 			var elem = document.getElementById("myBar");
 			var width = 1;
-			var interval = 20;
-			var id = setInterval(frame, interval);
+			var slowRate = Math.log10((100.01-total)*(100.01-total)*(100.01-total) + 0.0001);
+			slowRate * 100-total;
+			
+			if(Math.abs(risk - total) < 10){
+				slowRate *= 2;
+			}
+
+			var slowRateChange = (Math.log10(100-total) + 0.0001) / 75;
+			var id = setInterval(frame, 5);
 			function frame() {
 				if(width >= risk || width >= total){
 					//unhide hideresults
 					document.getElementById("results").classList.remove("hideresult");						document.getElementById("results").classList.remove("hideresult");
 					document.getElementById("firsthistory").classList.remove("hideresult");
-
 				}
 				if (width >= total) {
+					elem.style.width = total + "%";
 					clearInterval(id);
 					i = 0;
 				} else {
-					width++;
-					interval += 5;
+					width += (1 / slowRate);
+					slowRate += slowRateChange;
 					elem.style.width = width + "%";
 				}
 			}
