@@ -12,6 +12,7 @@ app.secret_key='SECRET_KEY'
 def index():
     score = float(session['score'] if 'score' in session else 100.00)
     history = list(session['history'] if 'history' in session else [])
+    loss_count = list(session['losses'] if 'losses' in session else 0)
 
     print(score)
     print(history)
@@ -23,7 +24,7 @@ def index():
         risk = int(post_data['risk'])
         wager = int(post_data['wager'])
 
-        game_result,rand = run_game(risk, wager)
+        game_result,rand = run_game(risk, wager, loss_count)
         score += game_result
         score_str = "{:,.2f}".format(score)
         if game_result > 0:
@@ -31,6 +32,7 @@ def index():
             message = f"You won ${result_str}!"
             output = f"Score: {score_str} | Risk: {risk} | Rand: {rand} | Win: ${result_str}"
         else:
+            loss_count += 1
             result_str = "{:,.2f}".format(game_result * -1)
             message = f"You lost ${result_str}!"
             output = f"Score: {score_str} | Risk: {risk} | Rand: {rand} | Loss: ${result_str}"
@@ -41,6 +43,7 @@ def index():
 
         session['score'] = score
         session['history'] = history
+        session['losses'] = loss_count
 
         print(score)
         print(history)
@@ -50,7 +53,7 @@ def index():
         score_str = "{:,.2f}".format(score)
         return render_template('risk.html', wager=10, risk=50, score=score_str, history=history)
 
-def run_game(current_risk, current_wager):
+def run_game(current_risk, current_wager, current_losses=0):
 
     # Calculate the multiplier
     multiplier = 1 / ((100.00 - current_risk) / 100)
@@ -62,13 +65,13 @@ def run_game(current_risk, current_wager):
     # Get the odds from the database
     rand = int(get_rand())
     
-    #TODO: Add one more try mode
-    #if rand < current_risk and losses >= 3:
-    #    rand = max(rand, get_rand())
+    # One more try mode if losses are 3 or more
+    if rand < current_risk and current_losses >= 3:
+        rand = max(rand, get_rand())
 
     if rand == current_risk:
         return win_amount*10,rand
-    elif rand > current_risk:
+    elif rand >= current_risk:
         return win_amount,rand
     else:
         return lose_amount,rand
@@ -98,6 +101,7 @@ def scores():
 
                         session['score'] = 100.00
                         session['history'] = []
+                        session['losses'] = 0
 
                         return redirect("/scores")
 
