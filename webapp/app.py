@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, redirect, session, session
 import random
 import json
 import os
-
+import time
+import decimal
 
 app = Flask(__name__)
 
@@ -10,9 +11,12 @@ app.secret_key='SECRET_KEY'
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    score = float(session['score'] if 'score' in session else 100.00)
+    score = decimal.Decimal(session['score'] if 'score' in session else 100.00).quantize(decimal.Decimal('0.01'), decimal.ROUND_HALF_UP)
     history = list(session['history'] if 'history' in session else [])
-    loss_count = list(session['losses'] if 'losses' in session else 0)
+    loss_count = int(session['losses'] if 'losses' in session else 0)
+    previous_seconds = list(session['seconds'] if 'seconds' in session else [])
+
+    seconds = int(time.time_ns())
 
     print(score)
     print(history)
@@ -20,12 +24,19 @@ def index():
     if request.method == 'POST':
         post_data = dict(request.form)
 
+        if( post_data['previous_second'] and int(post_data['previous_second']) in previous_seconds):
+            #print("**********************DOUBLE POST DETECTED**********************")
+            # Detected attempt to double post through refresh or back button, redirect to GET
+            return redirect("/")
+
         #Parse POST info and get random odds
         risk = int(post_data['risk'])
         wager = int(post_data['wager'])
 
         game_result,rand = run_game(risk, wager, loss_count)
-        score += game_result
+
+        score += decimal.Decimal(game_result).quantize(decimal.Decimal('0.01'), decimal.ROUND_HALF_UP)
+
         score_str = "{:,.2f}".format(score)
         if game_result > 0:
             result_str = "{:,.2f}".format(game_result)
@@ -41,20 +52,24 @@ def index():
         history.insert(0,output)
         history = history[:5]
 
+        if(len(post_data['previous_second']) > 0):
+            previous_seconds.insert(0,int(post_data['previous_second']))
+            previous_seconds = previous_seconds[:5]
+
         session['score'] = score
         session['history'] = history
         session['losses'] = loss_count
+        session['seconds'] = previous_seconds
 
-        print(score)
-        print(history)
+        #print(score)
+        #print(history)
 
-        return render_template('risk.html',score=score_str, message=message, risk=int(risk), wager=int(wager), rand=int(rand), history=history)
+        return render_template('risk.html',score=score_str, message=message, risk=int(risk), wager=int(wager), rand=int(rand), history=history, previous_second=seconds)
     elif request.method == 'GET':
         score_str = "{:,.2f}".format(score)
-        return render_template('risk.html', wager=10, risk=50, score=score_str, history=history)
+        return render_template('risk.html', wager=10, risk=50, score=score_str, history=history, previous_second=seconds)
 
 def run_game(current_risk, current_wager, current_losses=0):
-
     # Calculate the multiplier
     multiplier = 1 / ((100.00 - current_risk) / 100)
 
@@ -125,7 +140,7 @@ def get_rand(min=1, max=100):
 
     # Get the random number
     rand = random.randint(min, max)
-    return str(rand)
+    return int(rand)
 
 @app.route('/updateScore', methods=['POST'])
 def update_score(current_score):

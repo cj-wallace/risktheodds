@@ -137,6 +137,7 @@
 		</div>
 		<form method="POST"
 			action="{{ url_for('index') }}">
+			<input type="hidden" name="previous_second" value="{{ previous_second }}">
 			<input type="range" class="slider"
 				min="5" 
 				max="95" 
