@@ -217,8 +217,12 @@
 			function frame() {
 				if(width >= risk || width >= total){
 					//unhide hideresults
-					document.getElementById("results").classList.remove("hideresult");						document.getElementById("results").classList.remove("hideresult");
-					document.getElementById("firsthistory").classList.remove("hideresult");
+					if(document.getElementById("results")){
+						document.getElementById("results").classList.remove("hideresult");
+					}
+					if(document.getElementById("firsthistory")){
+						document.getElementById("firsthistory").classList.remove("hideresult");
+					}
 				}
 				if (width >= total) {
 					elem.style.width = total + "%";
