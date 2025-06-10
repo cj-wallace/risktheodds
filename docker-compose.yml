@@ -1,0 +1,8 @@
+services:
+  app:
+    image: risktheodds:latest
+    container_name: risktheodds
+    ports:
+      - "5098:5000"
+    volumes:
+      - ${SCORES_DATA_PATH}:/app/data
