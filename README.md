@@ -8,7 +8,7 @@ RiskTheOdds is a web-based game built in Flask. It aims to be a fun web game tha
 
 The tools used include Python, Flask, SQLite, Django, and Jinja.
 
-![Opening Screen](/readme/screenshot_1.png "Opening Screen")
+![Opening Screen](/assets/readme/screenshot_1.png "Opening Screen")
 
 ## Features
 
@@ -22,7 +22,7 @@ To install and run this project locally, follow these steps:
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/risktheodds.git
+    git clone https://github.com/cj-wallace/risktheodds.git
     ```
 2. Navigate to the project directory:
     ```sh
@@ -34,6 +34,8 @@ To install and run this project locally, follow these steps:
     ```
 4. Run the application:
     ```sh
+    mkdir data
+    touch data/scores.json
     SCORES_JSON_PATH="data/"
     docker run -d -v "$SCORES_JSON_PATH:/app/data/" -p 5000:5000 --name risktheodds risktheodds
 
@@ -42,7 +44,7 @@ To install and run this project locally, follow these steps:
 ## Images
 
 Game Screen
-![Game Screen](/readme/screenshot_2.png "Game Screen")
+![Game Screen](/assets/readme/screenshot_2.png "Game Screen")
 
 High Score Page
-![High Scores Page](/readme/screenshot_3.png "High Scores Page")
+![High Scores Page](/assets/readme/screenshot_3.png "High Scores Page")
