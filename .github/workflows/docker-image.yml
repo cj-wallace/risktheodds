@@ -42,6 +42,7 @@ jobs:
       uses: docker/metadata-action@v4
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        flavor: latest=true
         tags: type=raw,value={{date 'YYYYMMDD-hhmmss'}}
 
     - name: Build and Push the Docker image
