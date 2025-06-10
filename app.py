@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, session
+from flask import Flask, render_template, request, redirect, session, session, send_from_directory
 import random
 import json
 import os
@@ -8,6 +8,11 @@ import decimal
 app = Flask(__name__)
 
 app.secret_key='SECRET_KEY'
+
+# Pulling favicon from assets folder
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'assets'), 'favicon.ico')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
