@@ -11,7 +11,7 @@
 # Set variables
 REPO_PATH="/opt/risktheodds"
 DOCKER_COMPOSE_FILE="${REPO_PATH}/docker-compose.yml"
-CONTAINER_NAME="risk-webapp"
+CONTAINER_NAME="risktheodds"
 
 # Function to check for git changes
 check_git_changes() {
@@ -31,7 +31,7 @@ pull_and_rebuild() {
   cd "$REPO_PATH"
   git pull origin main
   
-  docker build --tag 'risktheodds' .
+  docker build --tag "${CONTAINER_NAME}" .
   SCORES_DATA_PATH="${REPO_PATH}/data"
 
   docker-compose -f "$DOCKER_COMPOSE_FILE" build --no-cache
