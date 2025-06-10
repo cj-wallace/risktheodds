@@ -38,7 +38,6 @@ To install and run this project locally, follow these steps:
     touch data/scores.json
     SCORES_JSON_PATH="data/"
     docker run -d -v "$SCORES_JSON_PATH:/app/data/" -p 5000:5000 --name risktheodds risktheodds
-
     ```
 
 ## Images
