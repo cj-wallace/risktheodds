@@ -41,12 +41,12 @@ def index():
         if game_result > 0:
             result_str = "{:,.2f}".format(game_result)
             message = f"You won ${result_str}!"
-            output = f"Score: {score_str} | Risk: {risk} | Rand: {rand} | Win: ${result_str}"
+            output = f"Score: {score_str} | Risk: ${risk} | Rand: {rand} | Win: ${result_str}"
         else:
             loss_count += 1
             result_str = "{:,.2f}".format(game_result * -1)
             message = f"You lost ${result_str}!"
-            output = f"Score: {score_str} | Risk: {risk} | Rand: {rand} | Loss: ${result_str}"
+            output = f"Score: {score_str} | Risk: ${risk} | Rand: {rand} | Loss: ${result_str}"
         
 
         history.insert(0,output)
